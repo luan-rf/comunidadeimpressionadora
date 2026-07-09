@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="container mt-3">
+        <hr>
+            <div class="row border mt-4 p-4 bg-light shadow-sm align-items-center">
+
+                {# 1. Coluna da Esquerda: Informações do Autor do Post #}
+                <div class="col col-3 text-center border-end">
+                    <img src="{{ url_for('static', filename='fotos_perfil/' + post.autor.foto_perfil) }}"
+                         class="rounded-circle img-thumbnail mb-2"
+                         style="width: 80px; height: 80px; object-fit: cover;"
+                         alt="Foto de Perfil">
+
+                    <h5 class="fw-bold text-dark mb-1">{{ post.autor.username }}</h5>
+
+                    <div class="d-flex flex-wrap gap-1 justify-content-center mt-2">
+                        {% if post.autor.cursos and "Não informado" not in post.autor.cursos %}
+                            {% for curso in post.autor.cursos.split(';') %}
+                                <span class="badge bg-success" style="font-size: 0.7rem;">{{ curso }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted" style="font-size: 0.75rem;">Sem cursos</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# 2. Coluna da Direita: Conteúdo do Post #}
+                <div class="col col-9 ps-4">
+                    <h3> {{ post.titulo }}
+                        <small class="text-muted" style="font-size: 15px">
+                            {{ post.data_criacao.strftime('%d/%m/%Y - %Hh:%Mm') }}
+                            {% if formulario: %}
+                                - <a href="#form_editar_post">Editar Post</a> / <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#ExcluirPost">Excluir Post</a>
+                            {% endif %}
+                        </small>
+                    </h3>
+                    <p style="white-space: pre-wrap;"> {{ post.corpo }} </p>
+                </div>
+
+            </div>
+    </div>
+
+{% if formulario %}
+    <div class="container">
+    <hr>
+    <div class="row">
+        <div class="col">
+            <form method="POST" action="" id= 'form_editar_post' class="border p-4 mt-2">
+                {{ formulario.csrf_token }}
+                <h3>Editar post</h3>
+                <fieldset>
+                    <div class="form-group mb-3">
+                        {{ formulario.titulo.label(class="form-control-label") }}
+                        {% if formulario.titulo.errors %}
+                            {{ formulario.titulo(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for erro in formulario.titulo.errors %}
+                                    {{ erro }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ formulario.titulo(class="form-control") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group mb-3">
+                        {{ formulario.corpo.label(class="form-control-label") }}
+                        {% if formulario.corpo.errors %}
+                            {{ formulario.corpo(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for erro in formulario.corpo.errors %}
+                                    {{ erro }}
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ formulario.corpo(class="form-control") }}
+                        {% endif %}
+                    </div>
+                </fieldset>
+                {{ formulario.botao_submit_post(class="btn btn-primary mt-2") }}
+            </form>
+        </div>
+    </div>
+    </div>
+{% endif %}
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="ExcluirPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Excluir Post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Você deseja realmente excluir este post? Essa ação não pode ser desfeita.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <form method="post" action="{{ url_for('excluir_post', post_id=post.id) }}">
+                <button type="submit" class="btn btn-danger">Confirmar exclusão</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

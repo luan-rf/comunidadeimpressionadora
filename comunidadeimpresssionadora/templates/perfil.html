@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="container mt-5 d-flex justify-content-center">
+        <div class="card p-4 shadow-sm" style="max-width: 550px; width: 100%; border-radius: 15px;">
+            <div class="d-flex align-items-center flex-column flex-sm-row text-center text-sm-start">
+
+                {# Foto padrão do modelo antigo via link externo #}
+                <div class="image pe-sm-3 mb-3 mb-sm-0">
+                    <img src="{{ foto_perfil }}"
+                         class="rounded-circle img-thumbnail"
+                         width="380"
+                         alt="Foto de Perfil">
+                </div>
+
+                <div class="ms-sm-3 w-100">
+                    {# Nome e Email dinâmicos vindo do banco #}
+                    <h4 class="mb-1 fw-bold text-dark">{{ current_user.username }}</h4>
+                    <span class="text-muted d-block mb-3">{{ current_user.email }}</span>
+
+                    {# Estatísticas reais do banco de dados #}
+                    <div class="p-3 mt-2 bg-primary d-flex justify-content-around rounded text-white stats shadow-sm">
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="articles small text-white-50">Cursos</span>
+                            <span class="number1 fw-bold fs-5">
+                                {% if current_user.cursos %}
+                                    {{ current_user.cursos.split(';')|length }}
+                                {% elif "Não informado" in current_user.cursos %}
+                                0
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <span class="rating small text-white-50">Posts</span>
+                            <span class="number3 fw-bold fs-5">{{ current_user.posts|length }}</span>
+                        </div>
+                    </div>
+
+                    {# Botão de Editar Perfil #}
+                    <div class="button mt-3 d-flex flex-row align-items-center">
+                        <a href= "{{ url_for ('editar_perfil') }}" class="btn btn-sm btn-outline-primary w-100 fw-semibold" style="border-radius: 8px;">Editar Perfil</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<div class="row justify-content-center" >
+    <div class="col col-4" style="text-align: center">
+        <strong>Cursos</strong><br>
+        {% for curso in current_user.cursos.split(';') %}
+            <button type="button" class="btn btn-success mt-2" disabled>{{ curso }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% block form_editar_perfil %}
+
+{% endblock %}
+
+{% endblock %}

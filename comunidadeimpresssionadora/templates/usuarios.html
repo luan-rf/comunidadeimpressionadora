@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="container py-4">
+        <h1 class="text-center mb-4">Usuários</h1>
+        {% for usuario in lista_usuarios %}
+            <div class="container mb-4 d-flex justify-content-center">
+                <div class="card p-4 shadow-sm" style="max-width: 550px; width: 100%; border-radius: 15px;">
+                    <div class="d-flex align-items-center flex-column flex-sm-row text-center text-sm-start">
+
+                        {# Foto de perfil #}
+                        <div class="image pe-sm-3 mb-3 mb-sm-0">
+                            <img src="{{ url_for('static', filename='fotos_perfil/' + usuario.foto_perfil) }}"
+                                 class="rounded-circle img-thumbnail"
+                                 style="width: 120px; height: 120px; object-fit: cover;"
+                                 alt="Foto de Perfil">
+                        </div>
+
+                        <div class="ms-sm-3 w-100">
+                            {# Nome e Email dinâmicos #}
+                            <h4 class="mb-1 fw-bold text-dark">{{ usuario.username }}</h4>
+                            <span class="text-muted d-block mb-3">{{ usuario.email }}</span>
+
+                            {# Estatísticas reais #}
+                            <div class="p-3 bg-primary d-flex justify-content-around rounded text-white stats shadow-sm">
+                                <div class="d-flex flex-column align-items-center">
+                                    <span class="articles small text-white-50">Cursos</span>
+                                    <span class="number1 fw-bold fs-5">
+                                        {# Lógica corrigida: testa primeiro se está vazio ou "Não informado" #}
+                                        {% if not usuario.cursos or "Não informado" in usuario.cursos %}
+                                            0
+                                        {% else %}
+                                            {{ usuario.cursos.split(';')|length }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-column align-items-center">
+                                    <span class="rating small text-white-50">Posts</span>
+                                    <span class="number3 fw-bold fs-5">{{ usuario.posts|length }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Seção de Cursos interna do Card #}
+                    {% if usuario.cursos and "Não informado" not in usuario.cursos %}
+                        <hr class="text-muted my-3">
+                        <div class="text-start">
+                            <strong class="text-secondary small d-block mb-1">Cursos Cadastrados:</strong>
+                            <div class="d-flex flex-wrap gap-1">
+                                {% for curso in usuario.cursos.split(';') %}
+                                    <span class="badge bg-success py-2 px-3 fw-normal" style="font-size: 0.85rem;">{{ curso }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
